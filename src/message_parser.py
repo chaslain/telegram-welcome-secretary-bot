@@ -1,5 +1,3 @@
-from ast import Str
-import string
 from telegram import Message, Update
 
 from models.message_to_send import MessageToSend
