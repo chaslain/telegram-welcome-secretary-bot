@@ -1,47 +1,60 @@
 import unittest
-from telegram import ChatMember, ChatMemberUpdated, Update
-from telegram import Message
-from message_parser import MessageParser
-
+from bot.message_parser import MessageParser
+from fake_models.fake_telegram import *
 
 
 
 class Test(unittest.TestCase):
 
-    def noExceptionOnNonJoin():
-        update: Update = Update()
-
-        update.message = Message()
-        MessageParser.handleMessage(update)
+    def testNoExceptionOnNonJoin(self):
+        update: Update = getUpdate()
+        MessageParser.getMessages(update)
     
-    def messageSentOnJoin():
-        update: Update = Update()
+    def testUserHasNullUsername(self):
+        update: Update = getUpdate()
+        update.chat_member = getChatMemberUpdated()
+        update.chat_member.new_chat_member = getChatMember()
         update.chat_member.new_chat_member.is_member = True
         update.chat_member.old_chat_member.is_member = False
-        update.chat_member.from_user.name = "test"
-        update.chat_member.from_user.full_name = "test testingson"
+        update.effective_user.full_name = "test testingson"
         update.chat_member.chat.id = "1234"
-        update.chat_member.from_user.username = "123123"
+        update.effective_user.id = "111"
+        update.effective_user.username = None
         messages = MessageParser.getMessages(update)
-        assert(messages[0].to_chat_id == "1234")
+        assert(messages[0].to_chat_id == "@Jonkler")
+        assert(messages[0].message == "A new person for the welcoming... test testingson")
+    
+    def testMessageSentOnJoin(self):
+        update: Update = getUpdate()
+        update.chat_member = getChatMemberUpdated()
+        update.chat_member.new_chat_member = getChatMember()
+        update.chat_member.new_chat_member.is_member = True
+        update.chat_member.old_chat_member.is_member = False
+        update.effective_user.full_name = "test testingson"
+        update.chat_member.chat.id = "1234"
+        update.effective_user.username = "testy"
+        messages = MessageParser.getMessages(update)
+        assert(messages[0].to_chat_id == "@Jonkler")
         assert(messages[0].message == "A new person for the welcoming... test testingson (testy)")
     
-    def messageNotSentOnNonJoinUpdate():
-        update: Update = Update();
+    def testMessageNotSentOnNonJoinUpdate(self):
+        update: Update = getUpdate();
+        update.chat_member = ChatMemberUpdated()
         update.chat_member.new_chat_member.is_member = True
         update.chat_member.old_chat_member.is_member = True
-        update.chat_member.from_user.full_name = "test testingson"
+        update.effective_user.full_name = "test testingson"
         update.chat_member.chat.id = "1234"
-        update.chat_member.from_user.username = "testy"
+        update.effective_user.id = "testy"
         messages = MessageParser.getMessages(update)
         assert(len(messages) == 0)
 
-    def messageNotSentOnNonUpdate():
-        update: Update = Update();
+    def testMessageNotSentOnNonUpdate(self):
+        update: Update = getUpdate();
+        update.message = Message()
         update.message.text = "What is going on guys??"
         messages = MessageParser.getMessages(update)
-        update.chat_member.from_user.full_name = "test testingson"
-        update.chat_member.chat.id = "1234"
-        update.chat_member.from_user.username = "testy"
+        update.effective_user.full_name = "test testingson"
+        update.message.chat.id = "1234"
+        update.effective_user.id = "testy"
         assert(len(messages) == 0)
         
