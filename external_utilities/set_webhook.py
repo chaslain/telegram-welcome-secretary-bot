@@ -3,7 +3,7 @@ import telegram
 print("provide token")
 token = input()
 print("provide webhook url")
-url = "https://vqclyfzjrf.execute-api.us-east-2.amazonaws.com/default/secretary-bot"
+url = input()
 
 bot = telegram.Bot(token=token)
 
