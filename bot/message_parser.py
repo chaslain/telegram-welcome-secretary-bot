@@ -8,20 +8,36 @@ class MessageParser:
 
     def getMessages(update) -> list[MessageToSend]:
         result = []
-        if 'chat_member' not in update or update['chat_member'] == None:
+        print(update)
+        if 'message' not in update or \
+            update['message'] == None or \
+            'new_chat_members' not in update['message'] or \
+            update['message']['new_chat_members'] == None:
             return result
         
-        if update['chat_member']['old_chat_member']['is_member'] == False\
-            and update['chat_member']['new_chat_member']['is_member'] == True:
-
+        result = []
+        for user in update['message']['new_chat_members']:
             msg = None
 
-            if update['effective_user']['username'] != None:
-                msg = "A new person for the welcoming... " + update['effective_user']['full_name'] \
-                + " (" + update['effective_user']['username'] + ")"
+            if 'username' in user and user['username'] != None:
+                msg = "A new person for the welcoming... " + MessageParser.getFullName(user) \
+                + " (@" + user['username'] + ")"
             else:
-                msg = "A new person for the welcoming... " + update['effective_user']['full_name']
+                msg = "A new person for the welcoming... " + MessageParser.getFullName(user)
 
-            message = MessageToSend(MessageParser.to_user, msg)
-            return [message]
-        return []
+            result.append(MessageToSend(MessageParser.to_user, msg))
+            
+        return result
+    
+    def getFullName(user):
+        result = ""
+        if "first_name" in user:
+            result += user["first_name"]
+        elif "last_name" in user:
+            return user["last_name"]
+        
+        if "last_name" in user:
+            result += " " + user["last_name"]
+        
+        return result
+

@@ -17,7 +17,8 @@ class MessageSender:
             self.sendMessage(message)
     
     def sendMessage(self, message: MessageToSend):
+        print("Sending message to " + message.to_chat_id)
         try:
             self.bot.send_message(chat_id=message.to_chat_id, text=message.message)
         except BaseException as e:
-            logging.warning("Could not send message to " + message.to_chat_id + "\n" + e)
+            logging.warning("Could not send message to " + message.to_chat_id + "\n" + str(e))

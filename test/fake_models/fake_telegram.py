@@ -1,7 +1,7 @@
 from fake_models.models import User, Message, Update, ChatMember, ChatMemberUpdated, Chat
 
 def getUser() -> User:
-    user = User()
+    user = User.get()
     return user
 
 
