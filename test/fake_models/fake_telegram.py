@@ -6,16 +6,16 @@ def getUser() -> User:
 
 
 def getMessage() -> Message:
-    return Message()
+    return Message.get()
 
 def getChat() -> Chat:
-    return Chat()
+    return Chat.get()
 
 def getUpdate() -> Update:
-    return Update()
+    return Update.get()
 
 def getChatMember() -> ChatMember:
-    return ChatMember()
+    return ChatMember.get()
 
 def getChatMemberUpdated() -> ChatMemberUpdated:
-    return ChatMemberUpdated()
+    return ChatMemberUpdated.get()

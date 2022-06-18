@@ -5,10 +5,8 @@ from telegram.update import Update
 
 def handler(event, context):
 
-    dict = json.loads(event)
-    update = Update(**dict)
     sender = bot.message_sender.MessageSender()
-    sender.sendMessages(bot.message_parser.MessageParser.getMessages(update))
+    sender.sendMessages(bot.message_parser.MessageParser.getMessages(event))
 
     return {
         'statusCode': 200
