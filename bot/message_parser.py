@@ -1,9 +1,11 @@
+import os
 from telegram import Update
 from bot.models.message_to_send import MessageToSend
 
-from bot.models.message_to_send import MessageToSend
-
 class MessageParser:
+
+    to_user = os.getenv("SECRETARY_BOT_TO_USER")
+
     def getMessages(update: Update) -> list[MessageToSend]:
         result = []
         if update.chat_member == None:
@@ -20,6 +22,6 @@ class MessageParser:
             else:
                 msg = "A new person for the welcoming... " + update.effective_user.full_name
 
-            message = MessageToSend("@Jonkler", msg)
+            message = MessageToSend(MessageParser.to_user, msg)
             return [message]
         return []
