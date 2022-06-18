@@ -1,13 +1,14 @@
-import jsonpickle
-import telegram
-import message_parser
-import message_sender
+import json
+import bot.message_parser
+import bot.message_sender
+from telegram.update import Update
 
 def handler(event, context):
 
-    update = jsonpickle.decode(event, classes=[telegram.Update]) 
-    sender = message_sender.MessageSender()
-    sender.sendMessages(message_parser.MessageParser.getMessages(update))
+    dict = json.loads(event)
+    update = Update(**dict)
+    sender = bot.message_sender.MessageSender()
+    sender.sendMessages(bot.message_parser.MessageParser.getMessages(update))
 
     return {
         'statusCode': 200
