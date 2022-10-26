@@ -1,5 +1,5 @@
 import os
-from telegram import Update
+from telegram import Bot, Update
 from bot.models.message_to_send import MessageToSend
 
 class MessageParser:
@@ -15,6 +15,7 @@ class MessageParser:
             update['message']['new_chat_members'] == None:
             return result
         
+        chat = update['message']['chat']
         result = []
         for user in update['message']['new_chat_members']:
             msg = None
@@ -24,6 +25,9 @@ class MessageParser:
                 + " (@" + user['username'] + ")"
             else:
                 msg = "A new person for the welcoming... " + MessageParser.getFullName(user)
+
+            if chat["username"] != None:
+                msg += " in @" + chat["username"]
 
             result.append(MessageToSend(MessageParser.to_user, msg))
             
