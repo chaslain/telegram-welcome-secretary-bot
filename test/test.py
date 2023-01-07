@@ -1,7 +1,6 @@
 import unittest
 from bot.message_parser import MessageParser
-from fake_models.fake_telegram import *
-import os
+from test.fake_models.fake_telegram import *
 
 
 
@@ -19,10 +18,12 @@ class Test(unittest.TestCase):
         update['message']['new_chat_members'] = [
             user
         ]
+
+        update['message']['chat'] = {}
+        update['message']['chat']['id'] = 123
         messages = MessageParser.getMessages(update)
         assert(len(messages) == 1)
-        print(messages[0].message)
-        assert(messages[0].message == "A new person for the welcoming... test testington")
+        assert("test testington" in messages[0].message)
     
     def testMessageSentOnJoin(self):
         update = getUpdate()
@@ -34,9 +35,13 @@ class Test(unittest.TestCase):
         update['message']['new_chat_members'] = [
             user
         ]
+
+        update['message']['chat'] = {}
+        update['message']['chat']['id'] = 123
         messages = MessageParser.getMessages(update)
         assert(len(messages) == 1)
-        assert(messages[0].message == "A new person for the welcoming... test testington (@testy)")
+        assert("test testington" in messages[0].message)
+        assert((not 'testy' in messages[0].message))
     
     def testMessageNotSentOnNonJoinUpdate(self):
         update = getUpdate()

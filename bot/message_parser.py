@@ -1,10 +1,23 @@
 import os
 from telegram import Bot, Update
 from bot.models.message_to_send import MessageToSend
-
+import random
 class MessageParser:
 
     to_user = os.getenv("SECRETARY_BOT_TO_USER")
+
+    def get_message_string(username):
+        random.seed()
+        cand = []
+        with open("config/responses.txt") as f:
+            for line in f:
+                cand.append(line)
+        
+        message_index = random.randrange(0, len(cand) - 1)
+
+        message = cand[message_index]
+        return message.replace("[target]", username) \
+            .replace("[boss]", MessageParser.to_user)
 
     def getMessages(update) -> list[MessageToSend]:
         result = []
@@ -17,19 +30,11 @@ class MessageParser:
         
         chat = update['message']['chat']
         result = []
+
         for user in update['message']['new_chat_members']:
-            msg = None
-
-            if 'username' in user and user['username'] != None:
-                msg = "A new person for the welcoming... " + MessageParser.getFullName(user) \
-                + " (@" + user['username'] + ")"
-            else:
-                msg = "A new person for the welcoming... " + MessageParser.getFullName(user)
-
-            if chat["username"] != None:
-                msg += " in @" + chat["username"]
-
-            result.append(MessageToSend(MessageParser.to_user, msg))
+            name = MessageParser.getFullName(user)
+            message = MessageParser.get_message_string(name)
+            result.append(MessageToSend(chat['id'], message))
             
         return result
     

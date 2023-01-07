@@ -1,4 +1,4 @@
-from fake_models.models import User, Message, Update, ChatMember, ChatMemberUpdated, Chat
+from test.fake_models.models import User, Message, Update, ChatMember, ChatMemberUpdated, Chat
 
 def getUser() -> User:
     user = User.get()
